@@ -34,11 +34,9 @@ def login_required(f):
 @login_required
 def test_db():
     try:
-        # Попытка получить количество фильмов из базы данных
         film_count = Film.query.count()
         return f"Количество фильмов в базе данных: {film_count}"
     except SQLAlchemyError as e:
-        # В случае ошибки подключения к базе данных
         return f"Ошибка подключения к базе данных: {e}"
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -51,22 +49,20 @@ def login():
             flash('Необходимо ввести имя пользователя и пароль')
             return redirect(url_for('login'))
 
-            # Поиск пользователя в базе данных
+            # Поиск пользователя в бд
         user = User.query.filter_by(username=username).first()
 
-        # Проверка, существует ли пользователь и верен ли пароль
+        # Проверка
         if user and user.password_hash == password:
             session['logged_in'] = True
             session['username'] = username
             next_page = request.args.get('next')
-            # Пароль верный, переход на домашнюю страницу
             return redirect(next_page or url_for('home'))
         else:
-            # Пользователь не найден или пароль неверный
             flash('Такого пользователя не существует или неверный пароль')
             return redirect(url_for('login'))
 
-    # Показать форму входа при GET-запросе
+    # при GET-запросе
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -86,7 +82,7 @@ def register():
             flash('Пользователь с таким именем уже существует.')
             return redirect(url_for('register'))
 
-        # Создание нового пользователя
+        
         new_user = User(username=username)
         new_user.password_hash = password
         new_user.Email = email
@@ -116,14 +112,14 @@ def home():
 
 @app.route('/filmNow')
 def film_now():
-    # Запрос к базе данных для получения всех фильмов, которые идут в прокате
+    # Запрос к бд, фильмы в прокате
     films_in_show = Showtime.query.join(Film, Showtime.FilmID == Film.FilmID).all()
-    
+
     for showtime in films_in_show:
         print("Film:", showtime.film.Title, "Poster:", showtime.film.Poster)
 
 
-    # Передача результатов в шаблон
+    
     return render_template('film_now.html', films=films_in_show)
 
 @app.route('/buy-ticket/<int:showtime_id>')
