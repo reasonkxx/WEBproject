@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Фильмы в прокате</title>
+    <style>
+        .button-disabled {
+        color: #6c757d;
+        background-color: #e0e0e0;
+        border: 1px solid #d3d3d3;
+        padding: .375rem .75rem;
+        border-radius: .25rem;
+        text-decoration: none;
+        cursor: not-allowed;
+    }
+    </style>
+    
+</head>
+<body>
+    <h1>Фильмы в прокате</h1>
+    <div class="films-container">
+        {% for showtime in films %}
+            <div class="film">
+                <h2>{{ showtime.film.Title }}</h2>
+                <img src="{{ url_for('static', filename=showtime.film.Poster) }}" alt="Постер фильма">
+                <p>{{ showtime.film.Description }}</p>
+                <p>Длительность: {{ showtime.film.Duration }} минут</p>
+                <p>Дата показа: {{ showtime.DateTime.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p>Цена: {{ showtime.Price }} Гривен</p>
+                <a class="button-disabled">Купить</a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

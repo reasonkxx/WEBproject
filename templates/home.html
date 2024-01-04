@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Добро пожаловать в кинотеатр</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for('static', filename=' ImageForBackGround.png') }}') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .welcome-banner {
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Черный фон с прозрачностью */
+            text-align: center;
+            margin-top: 50px;
+            /* Или желаемое расстояние от верха страницы */
+        }
+
+        .welcome-banner h1 {
+            color: white;
+            font-weight: bold;
+            font-size: 3em;
+            /* Или любой другой размер, который вы предпочитаете */
+            border: 3px solid white;
+            display: inline-block;
+            padding: 10px 20px;
+        }
+
+        .logout-container {
+            position: fixed;
+            /* или используйте absolute для позиционирования относительно родителя */
+            right: 10px;
+            /* Расстояние от правого края */
+            top: 10px;
+            /* Расстояние от верха */
+            z-index: 100;
+            /* Убедитесь, что кнопка будет поверх других элементов */
+        }
+
+        .logout-button {
+            padding: 5px 10px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="welcome-banner">
+        <h1>Добро пожаловать</h1>
+        <div class="logout-container">
+            <!-- Убедитесь, что ваша форма использует метод GET, если вы не настроили CSRF-защиту для POST-запросов -->
+            <form action="{{ url_for('logout') }}" method="get">
+                <button type="submit" class="logout-button">Выход</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
