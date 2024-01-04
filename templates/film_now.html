@@ -4,15 +4,26 @@
     <meta charset="UTF-8">
     <title>Фильмы в прокате</title>
     <style>
+        .button {
+            color: white;
+            background-color: #007bff;
+            border: 1px solid #007bff;
+            padding: .375rem .75rem;
+            border-radius: .25rem;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px 0;
+        }
         .button-disabled {
-        color: #6c757d;
-        background-color: #e0e0e0;
-        border: 1px solid #d3d3d3;
-        padding: .375rem .75rem;
-        border-radius: .25rem;
-        text-decoration: none;
-        cursor: not-allowed;
-    }
+            color: #6c757d;
+            background-color: #e0e0e0;
+            border: 1px solid #d3d3d3;
+            padding: .375rem .75rem;
+            border-radius: .25rem;
+            text-decoration: none;
+            cursor: not-allowed;
+        }
     </style>
     
 </head>
@@ -27,7 +38,7 @@
                 <p>Длительность: {{ showtime.film.Duration }} минут</p>
                 <p>Дата показа: {{ showtime.DateTime.strftime('%d.%m.%Y %H:%M') }}</p>
                 <p>Цена: {{ showtime.Price }} Гривен</p>
-                <a class="button-disabled">Купить</a>
+                <a href="{{ url_for('buy_ticket', showtime_id=showtime.ShowtimeID) }}" class="button">Купить</a>
             </div>
         {% endfor %}
     </div>

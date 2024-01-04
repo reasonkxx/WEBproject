@@ -56,6 +56,7 @@ def login():
         if user and user.password_hash == password:
             session['logged_in'] = True
             session['username'] = username
+            session['user_id'] = user.UserID  
             next_page = request.args.get('next')
             return redirect(next_page or url_for('home'))
         else:
@@ -111,22 +112,49 @@ def home():
 
 
 @app.route('/filmNow')
+@login_required
 def film_now():
-    # Запрос к бд, фильмы в прокате
     films_in_show = Showtime.query.join(Film, Showtime.FilmID == Film.FilmID).all()
-
-    for showtime in films_in_show:
-        print("Film:", showtime.film.Title, "Poster:", showtime.film.Poster)
-
-
+    
+    # for showtime in films_in_show:
+    #     assert 'ShowtimeID' in dir(showtime), "Объект Showtime не содержит ShowtimeID"
     
     return render_template('film_now.html', films=films_in_show)
 
-@app.route('/buy-ticket/<int:showtime_id>')
+def get_current_user_id():
+    return session.get('user_id')
+
+@app.route('/buy-ticket/<int:showtime_id>', methods=['GET', 'POST'])
+@login_required
 def buy_ticket(showtime_id):
-    # Logic for handling ticket purchase goes here
-    # ...
-    return 'Ticket purchase for showtime ID: {}'.format(showtime_id)
+    current_user_id = get_current_user_id()  
+    showtime = Showtime.query.get_or_404(showtime_id)
+
+    taken_seats = Ticket.query.with_entities(Ticket.SeatNumber).filter_by(ShowtimeID=showtime_id).all()
+    taken_seats = [seat.SeatNumber for seat in taken_seats]
+
+    
+    total_seats = 20  
+    seats = [{'number': i, 'is_taken': i in taken_seats} for i in range(1, total_seats + 1)]
+
+    if request.method == 'POST':
+        seat_number = int(request.form.get('seat_number'))
+
+        # Проверка
+        if seat_number in taken_seats:
+            flash('Это место уже занято.')
+            return redirect(url_for('buy_ticket', showtime_id=showtime_id))
+
+        new_ticket = Ticket(ShowtimeID=showtime_id, SeatNumber=seat_number,Price =10, UserId=current_user_id, Status='Куплено')
+        db.session.add(new_ticket)
+        db.session.commit()
+
+        flash('Билет успешно куплен!')
+
+    return render_template('buy_ticket.html', seats=seats, showtime_id=showtime_id)
+
+
+    
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Покупка билетов</title>
+    <style>
+        .seats-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 600px; /* Примерная ширина зала */
+        }
+        .seat {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+        .seat.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Покупка Билетов</h1>
+    <div class="seats-container">
+        <form action="{{ url_for('buy_ticket', showtime_id=showtime_id) }}" method="post">
+            {% for seat in seats %}
+                <button type="submit" name="seat_number" value="{{ seat.number }}"
+                    class="seat {{ 'disabled' if seat.is_taken else '' }}"
+                    {% if seat.is_taken %}disabled{% endif %}>
+                    Место {{ seat.number }}
+                </button>
+            {% endfor %}
+        </form>
+    </div>
+</body>
+</html>
